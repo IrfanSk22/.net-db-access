@@ -116,6 +116,7 @@ public class CompanyRepositoryAdoNet : ICompanyRepository
         {
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@CompanyId", company.CompanyId);
+            cmd.Parameters.AddWithValue("@Address", company.Address);
             cmd.Parameters.AddWithValue("@Name", company.Name);
             cmd.Parameters.AddWithValue("@City", company.City);
             cmd.Parameters.AddWithValue("@State", company.State);

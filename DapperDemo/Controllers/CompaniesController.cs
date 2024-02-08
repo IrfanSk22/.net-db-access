@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DapperDemo.Models;
 using DapperDemo.Repository;
+using DapperDemo.Repository.IRepository;
 
 namespace DapperDemo.Controllers
 {
@@ -9,21 +10,24 @@ namespace DapperDemo.Controllers
         private readonly ICompanyRepository _compRepo;
         private readonly IEmployeeRepository _empRepo;
         private readonly IBonusRepository _bnsRepo;
-
+        private readonly IDapperSprocRepo _sprocRepo;
 
         public CompaniesController(ICompanyRepository compRepo,
             IEmployeeRepository empRepo,
-            IBonusRepository bnsRepo)
+            IBonusRepository bnsRepo,
+            IDapperSprocRepo sprocRepo)
         {
             _compRepo = compRepo;
             _empRepo = empRepo;
             _bnsRepo = bnsRepo;
+            _sprocRepo = sprocRepo;
         }
 
         // GET: Companies
         public IActionResult Index()
         {
             return View(_compRepo.GetAll());
+            // return View(_sprocRepo.List<Company>("usp_GetALLCompany"));
         }
 
         // GET: Companies/Details/5
@@ -79,6 +83,7 @@ namespace DapperDemo.Controllers
                 return NotFound();
             }
 
+            // var company = _sprocRepo.Single<Company>("usp_GetCompany", new { CompanyId = id.GetValueOrDefault()});
             var company = _compRepo.Find(id.GetValueOrDefault());
 
             if (company == null)

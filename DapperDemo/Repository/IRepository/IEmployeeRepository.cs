@@ -9,6 +9,8 @@ public interface IEmployeeRepository
     Employee Find(int id);
 
     Employee Add(Employee employee);
+    
+    Task<Employee> AddAsync(Employee employee);
 
     Employee Update(Employee employee);
 

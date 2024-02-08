@@ -25,11 +25,10 @@ public class HomeController : Controller
     {
         return View();
     }
-
-    /*
+    
     public IActionResult AddTestRecords()
     {
-        Company company = new Company()
+        var company = new Company()
         {
             Name = "Test" +Guid.NewGuid().ToString(),
             Address = "test address",
@@ -55,16 +54,16 @@ public class HomeController : Controller
             Title = "Test Manager 2"
         });
 
-        return View();
+        _bnsRepo.AddTestCompanyWithEmployeesWithTransaction(company);
+        return RedirectToAction(nameof(Index));
     }
-    */
-
-    /*
+    
     public IActionResult RemoveTestRecords()
     {
-        return View();
+        int[] companyIdToRemove = _bnsRepo.FilterCompanyByName("Test").Select(i => i.CompanyId).ToArray();
+        _bnsRepo.RemoveRange(companyIdToRemove);
+        return RedirectToAction(nameof(Index));
     }
-    */
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

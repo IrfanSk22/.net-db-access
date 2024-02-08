@@ -8,12 +8,12 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
-        
+
     }
 
     public DbSet<Company> Company { get; set; }
     public DbSet<Employee> Employees { get; set; }
-    
+
     /* Didn't understood this fluent API ... */
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,6 +1,6 @@
 /*
 
-🔶 Dapper
+Dapper
 
 1) Dapper is a Micro ORM (Object Relational Mapper)
 2) Micro ORM maps database and .NET Objects
@@ -8,7 +8,7 @@
 4) Micro ORM - Dapper
 5) Dapper is built by Stack Overflow
 
-🔶 Advantages of Micro ORM
+Advantages of Micro ORM
 
 1) Micro ORM will usually perform better.
 2) Setting up full-blown ORM framework in your project
@@ -17,7 +17,7 @@ might be too much.
 4) Works with any database
 5) You write your own SQL query.
 
-🔶 Disadvantages of Micro ORM
+Disadvantages of Micro ORM
 
 1) Write your own SQL query.
 2) Mappings can be difficult.
@@ -55,7 +55,22 @@ If efficiency is your main concern, you should close your eyes and just go with 
 >> dotnet aspnet-codegenerator controller -name CompaniesController -m Company -dc ApplicationDbContext 
 --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries -f
 
+
 >> dotnet aspnet-codegenerator view ManageEnrollments Details -m ClassEnrollmentViewModel 
 -outDir Views/Classes -f -udl
+
+*/
+
+/*
+
+< C# />
+
+@(3) [ DapperDemo, MagicVilla_VillaAPI ]
+
+@(1) [ jQuery, Ajax ]
+
+< SQL />
+
+@(1) [ EMSCrud ]
 
 */

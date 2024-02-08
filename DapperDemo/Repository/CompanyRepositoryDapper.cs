@@ -8,7 +8,7 @@ namespace DapperDemo.Repository;
 public class CompanyRepositoryDapper : ICompanyRepository
 {
     private IDbConnection _db;
-    
+
     public CompanyRepositoryDapper(IConfiguration configuration)
     {
         _db = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
@@ -17,27 +17,26 @@ public class CompanyRepositoryDapper : ICompanyRepository
     public List<Company> GetAll()
     {
         var sql = "SELECT * FROM Company;";
-        
+
         return _db.Query<Company>(sql).ToList();
     }
-    
+
     public Company Find(int id)
     {
         var sql = "SELECT * FROM Company WHERE CompanyId = @CompanyId;";
-        
+
         return _db.Query<Company>(sql, new { @CompanyId = id }).Single();
     }
 
     public Company Add(Company company)
     {
-        var sql =
-            "INSERT INTO Company (Name, Address, City, State, PostalCode) " + 
-            "VALUES(@Name, @Address, @City, @State, @PostalCode);" + 
+        var sql = "INSERT INTO Company (Name, Address, City, State, PostalCode) " +
+            "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
             "SELECT CAST(SCOPE_IDENTITY() as int);";
-        
+
         var id = _db.Query<int>(sql, company).Single();
         company.CompanyId = id;
-        
+
         return company;
     }
 

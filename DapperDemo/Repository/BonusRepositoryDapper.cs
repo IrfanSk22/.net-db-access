@@ -1,4 +1,5 @@
 using System.Data;
+using System.Transactions;
 using Dapper;
 using DapperDemo.Models;
 using Microsoft.Data.SqlClient;
@@ -33,6 +34,83 @@ public class BonusRepositoryDapper : IBonusRepository
         }, splitOn: "EmployeeId");
 
         return company.Distinct().ToList();
+    }
+
+    public void AddTestCompanyWithEmployees(Company objComp)
+    {
+        var sql = "INSERT INTO Company (Name, Address, City, State, PostalCode) " +
+                  "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
+                  "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+        var id = _db.Query<int>(sql, objComp).Single();
+        objComp.CompanyId = id;
+
+        /*
+        foreach (var employee in objComp.Employees)
+        {
+            employee.CompanyId = objComp.CompanyId;
+            var sql1 =
+                "INSERT INTO     Employees (Name, Title, Email, Phone, CompanyId) " +
+                "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+                "SELECT CAST(SCOPE_IDENTITY() as int);";
+            
+            _db.Query<int>(sql1, employee).Single();
+        }
+        */
+        
+        // batch insert
+        objComp.Employees.Select(c => 
+        { 
+            c.CompanyId = id;
+            return c;
+        }).ToList();
+        
+        const string sqlEmp = "INSERT INTO     Employees (Name, Title, Email, Phone, CompanyId) " +
+                     "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+                     "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+        _db.Execute(sqlEmp, objComp.Employees);
+    }
+    
+    public void AddTestCompanyWithEmployeesWithTransaction(Company objComp)
+    {
+        using (var transaction = new TransactionScope())
+        {
+            try
+            {
+                var sql = "INSERT INTO Company (Name, Address, City, State, PostalCode) " +
+                          "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
+                          "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+                var id = _db.Query<int>(sql, objComp).Single();
+                objComp.CompanyId = id;
+        
+                // batch insert
+                objComp.Employees.Select(c => 
+                { 
+                    c.CompanyId = id;
+                    return c;
+                }).ToList();
+        
+                const string sqlEmp = "INSERT INTO     Employees (Name, Title, Email, Phone, CompanyId) " +
+                                      "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+                                      "SELECT CAST(SCOPE_IDENTITY() as int);";
+                
+                _db.Execute(sqlEmp, objComp.Employees);
+                transaction.Complete();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+    }
+
+    public void RemoveRange(int[] companyId)
+    {
+        const string sql = "DELETE FROM Company WHERE CompanyId IN @companyId";
+        _db.Query(sql, new { companyId });
     }
 
     public Company GetCompanyWithEmployees(int id)
@@ -71,5 +149,11 @@ public class BonusRepositoryDapper : IBonusRepository
         }, new { ID = id }, splitOn: "CompanyId");
    
         return employee.ToList();
+    }
+    
+    public List<Company> FilterCompanyByName(string name)
+    {
+        const string sql = "SELECT * FROM Company WHERE Name LIKE '%' + @name + '%' ";
+        return _db.Query<Company>(sql, new { name }).ToList();
     }
 }
